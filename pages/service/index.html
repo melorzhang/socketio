@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Socket.IO chat</title>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover" name="viewport" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font: 13px Helvetica, Arial;
+        }
+        
+        #msg {
+            background: #000;
+            padding: 3px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        
+        #msg input {
+            border: 0;
+            padding: 10px;
+            width: 90%;
+            margin-right: .5%;
+        }
+        
+        #msg button {
+            width: 9%;
+            background: rgb(130, 224, 255);
+            border: none;
+            padding: 10px;
+        }
+        
+        #messages {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        #messages li {
+            padding: 5px 10px;
+        }
+        
+        #messages li:nth-child(odd) {
+            background: #eee;
+        }
+    </style>
+</head>
+
+<body>
+    <ul id="messages"></ul>
+    <a href="https://socketio-uqevskspgu.now.sh/service">线上地址</a>
+    <form action="" id="msg">
+        <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+    <form action="" id="login">
+        <input type="text" name="userName" id="userName" />
+        <input type="password" name="psw" id="psw" />
+        <button>Send</button>
+    </form>
+    <div id='userList'></div>
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+    $(function() {
+        var socket = io();
+        var userName = sessionStorage.getItem('userName');
+        var token = sessionStorage.getItem('token');
+        var userId = sessionStorage.getItem('userId');
+        if (userName && token && userId) {
+            $('#login').hide();
+        }
+        $('#login').submit(function() {
+            socket.emit('getToken', {
+                userName: $('#userName').val(),
+                psw: $('#psw').val(),
+                userType: 'service',
+            });
+            $('#userName').val('');
+            $('#psw').val('')
+            return false;
+        });
+        $('#msg').submit(function() {
+            if (userName && token && userId) {
+                socket.emit('chat message', {
+                    msg: $('#m').val(),
+                    token: sessionStorage.getItem('token'),
+                    userType: 'service',
+                    targetId: sessionStorage.getItem('targetId'),
+                    createTime: Number(new Date()),
+                    userId: sessionStorage.getItem('userId'),
+                    userName: sessionStorage.getItem('userName')
+                });
+                $('#m').val('');
+            } else {
+                $('#login').show();
+            }
+            return false;
+        });
+        socket.on('sysMsg', (msg) => {
+            $('#messages').append($('<li>').text(`System:${msg}`));
+        })
+        socket.on('chat message', function(data) {
+            console.log(data)
+            $('#messages').append($('<li>').text(data.msg));
+        });
+        socket.on('getToken', (data) => {
+            console.log(data);
+            sessionStorage.setItem('token', data.token)
+            sessionStorage.setItem('userName', data.userName)
+            sessionStorage.setItem('userId', data.userId)
+            $('#login').hide()
+        })
+        socket.on('err', (data) => {
+            sessionStorage.removeItem('token')
+            sessionStorage.removeItem('userName')
+            sessionStorage.removeItem('userId')
+            console.error(data.errMsg, data.errCode);
+        })
+    });
+</script>
+
+</html>
