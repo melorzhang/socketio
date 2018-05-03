@@ -1,0 +1,22 @@
+{
+  "name": "custom-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./server/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@wenwenkj.com:Zhanggw/custom-service.git"
+  },
+  "keywords": [
+    "客服系统"
+  ],
+  "author": "melor zhang",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.3",
+    "socket.io": "^2.1.0"
+  }
+}
