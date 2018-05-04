@@ -12,6 +12,21 @@ const { msgCfg, errCfg, eventCfg} =Constant;
 const users={};
 ioLogic(io,users);
 app.use(express.static(path.resolve(__dirname, '../client/pages')));
+app.use(express.static(path.resolve(__dirname, "../upload")));
+const formidable = require("express-formidable");
+app.use(
+  formidable({
+    uploadDir:path.resolve(__dirname,'../upload'),
+		maxFieldsSize: 5 * 1024 * 1024,
+  })
+);
+const uploadHandler=require('./upload');
+app.post("/upload", (req, res) => {
+	// console.log(req.fields, req.files);
+  uploadHandler("fulAvatar",req.files);
+	res.redirect("/test/uploadImg");
+});
+
 http.listen(3000, function() {
 	console.log("listening on *:3000");
 });
