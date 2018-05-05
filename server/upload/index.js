@@ -17,11 +17,11 @@ module.exports=function (key,files) {
   const file=files[key];
   // console.log(file);
   const isImage=checkImage(file);
-  fs.rename(
-    file.path,
-    path.join(__dirname, `../../upload/${isImage?'images/':''}`, genFileName(file)),
-    err => {
-      console.log(err);
-    }
-  );
+    fs.rename(
+        file.path,
+        path.join(__dirname, `../../upload/${isImage?'images/':''}`, genFileName(file)),
+        err => {
+          console.log(err);
+        }
+      );
 }

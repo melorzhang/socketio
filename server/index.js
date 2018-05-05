@@ -14,6 +14,15 @@ ioLogic(io,users);
 app.use(express.static(path.resolve(__dirname, '../client/pages')));
 app.use(express.static(path.resolve(__dirname, "../upload")));
 const formidable = require("express-formidable");
+const fs=require('fs');
+try {
+  fs.mkdirSync(`${path.join(__dirname,'../')}/upload`);
+  fs.mkdirSync(`${path.join(__dirname,'../')}/upload/images`);
+} catch (error) {
+  console.log(error);
+  console.log('maybe the dir is already exist');
+}
+
 app.use(
   formidable({
     uploadDir:path.resolve(__dirname,'../upload'),
@@ -22,9 +31,9 @@ app.use(
 );
 const uploadHandler=require('./upload');
 app.post("/upload", (req, res) => {
-	// console.log(req.fields, req.files);
+	console.log(req.fields, req.files);
   uploadHandler("fulAvatar",req.files);
-	res.redirect("/test/uploadImg");
+	res.redirect("/upload");
 });
 
 http.listen(3000, function() {
