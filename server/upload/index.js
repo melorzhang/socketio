@@ -13,15 +13,30 @@ const checkImage=(file)=>{
   const reg = /\.(jpg|png|bmp|gif)$/i;
   return reg.test(getExt(file.name));
 }
+const checkSize=(file,maxSize=5*1024*1024)=>{
+  return file.size<=maxSize
+}
 module.exports=function (key,files) {
   const file=files[key];
   // console.log(file);
-  const isImage=checkImage(file);
-    fs.rename(
+  if(file){
+    if(checkSize(file)){
+      const isImage=checkImage(file);
+      fs.rename(
         file.path,
         path.join(__dirname, `../../upload/${isImage?'images/':''}`, genFileName(file)),
         err => {
-          console.log(err);
+          err&&console.log(err);
         }
       );
+    }else{
+      console.log('file size too large');
+      fs.unlinkSync(file.path)
+    }
+  }else{
+    console.log('file err',file)
+  }
+  
+  
+    
 }

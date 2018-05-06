@@ -1,6 +1,3 @@
-/**
- * Created by hp on 2018/5/3.
- */
 const express=require("express")
 const app = express();
 const http = require("http").Server(app);
@@ -12,28 +9,27 @@ const { msgCfg, errCfg, eventCfg} =Constant;
 const users={};
 ioLogic(io,users);
 app.use(express.static(path.resolve(__dirname, '../client/pages')));
-app.use(express.static(path.resolve(__dirname, "../upload")));
-const formidable = require("express-formidable");
+
+const formidable=require('formidable');
 const fs=require('fs');
+const util = require('util');
 try {
-  fs.mkdirSync(`${path.join(__dirname,'../')}/upload`);
-  fs.mkdirSync(`${path.join(__dirname,'../')}/upload/images`);
+  fs.mkdirSync(path.join(__dirname,'../upload'));
+  fs.mkdirSync(path.join(__dirname,'../upload/images'));
 } catch (error) {
   console.log(error);
   console.log('maybe the dir is already exist');
 }
-
-app.use(
-  formidable({
-    uploadDir:path.resolve(__dirname,'../upload'),
-		maxFieldsSize: 5 * 1024 * 1024,
-  })
-);
+app.use(express.static(path.resolve(__dirname, "../upload")));
 const uploadHandler=require('./upload');
 app.post("/upload", (req, res) => {
-	console.log(req.fields, req.files);
-  uploadHandler("fulAvatar",req.files);
-	res.redirect("/upload");
+  var form = new formidable.IncomingForm();
+  form.maxFileSize=5*1024*1024;
+  form.uploadDir=path.resolve(__dirname,'../upload');
+  form.parse(req, function(err, fields, files) {
+    uploadHandler("fulAvatar",files);
+    res.redirect("/upload");
+  });
 });
 
 http.listen(3000, function() {
