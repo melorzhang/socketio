@@ -3,7 +3,8 @@
     "version": "1.0.0",
     "description": "",
     "scripts": {
-        "start": "node ./server/index.js"
+        "start": "node ./server/index.js",
+        "temp": "node ./server/conn-mysql/index.js"
     },
     "repository": {
         "type": "git"

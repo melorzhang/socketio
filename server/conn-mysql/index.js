@@ -1,22 +1,31 @@
-var mysql = require("mysql");
-var connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "melor233",
-  database: "test_db"
-});
+const mysql = require("mysql");
+const cfg=require("./mysql-db-cfg");
+// console.log(cfg);
+const connection = mysql.createConnection(cfg);
 connection.on('error',(err)=>{console.log(err)})
 connection.connect();
-connection.query("CREATE TABLE test_table(id INT(11) PRIMARY KEY,name VARCHAR(20))", function(error, results, fields) {
+connection.query("SHOW TABLES", function(error, results, fields) {
   // if (error) throw error;
-  if(error){
-    console.log(error)
+  if (error) {
+    console.log(error);
   }
   console.log("The results & field is: ", results, fields);
 });
-connection.query("SHOW TABLES", function(error, results, fields) {
-  // if (error) throw error;
-  console.log("The results & field is: ", results,fields);
-});
 
 connection.end();
+module.exports=function (cfg,sql,callback) {
+  const connection = mysql.createConnection(cfg);
+  connection.on("error", err => {
+    console.log(err);
+  });
+  connection.connect();
+  connection.query(sql, function(error, results, fields) {
+    // if (error) throw error;
+    if (error) {
+      console.log(error);
+    }
+    console.log("The results & field is: ", results, fields);
+    typeof callback==='function'&&callback(results,fields);
+  });
+  connection.end();
+}

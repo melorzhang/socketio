@@ -6,6 +6,9 @@ const ioLogic=require('./io-logic');
 const Constant= require("../config/Constant");
 const path = require('path')
 const { msgCfg, errCfg, eventCfg} =Constant;
+
+const connMysql=require('./conn-mysql');
+const connMysqlCfg=require('./conn-mysql/mysql-db-cfg');
 const users={};
 ioLogic(io,users);
 app.use(express.static(path.resolve(__dirname, '../client/pages')));
@@ -23,14 +26,17 @@ try {
 app.use(express.static(path.resolve(__dirname, "../upload")));
 const uploadHandler=require('./upload');
 app.post("/upload", (req, res) => {
-  var form = new formidable.IncomingForm();
+  const form = new formidable.IncomingForm();
   form.maxFileSize=5*1024*1024;
   form.uploadDir=path.resolve(__dirname,'../upload');
   form.parse(req, function(err, fields, files) {
-    uploadHandler("fulAvatar",files);
+    const file=uploadHandler("fulAvatar",files);
+    console.log(file);
     res.redirect("/upload");
   });
 });
+
+
 
 http.listen(3000, function() {
 	console.log("listening on *:3000");

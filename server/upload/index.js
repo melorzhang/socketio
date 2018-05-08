@@ -22,13 +22,11 @@ module.exports=function (key,files) {
   if(file){
     if(checkSize(file)){
       const isImage=checkImage(file);
-      fs.rename(
-        file.path,
-        path.join(__dirname, `../../upload/${isImage?'images/':''}`, genFileName(file)),
-        err => {
-          err&&console.log(err);
-        }
-      );
+      const newName=path.join(__dirname, `../../upload/${isImage?'images/':''}`, genFileName(file))
+      fs.rename(file.path, newName, err => {
+        err && console.log(err);
+      });
+      return newName;
     }else{
       console.log('file size too large');
       fs.unlinkSync(file.path)
@@ -38,5 +36,5 @@ module.exports=function (key,files) {
   }
   
   
-    
+  return null;
 }
