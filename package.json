@@ -4,7 +4,8 @@
     "description": "",
     "scripts": {
         "start": "node ./server/index.js",
-        "temp": "node ./server/conn-mysql/index.js"
+        "temp": "node ./server/conn-mysql/index.js",
+        "dev:redis": "node ./server/conn-redis/index.js"
     },
     "repository": {
         "type": "git"
@@ -19,6 +20,7 @@
         "formidable": "^1.2.1",
         "mysql": "^2.15.0",
         "mysql2": "^1.5.3",
+        "redis": "^2.8.0",
         "sequelize": "^4.37.6",
         "socket.io": "^2.1.0"
     }

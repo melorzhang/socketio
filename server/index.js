@@ -25,6 +25,8 @@ try {
 }
 app.use(express.static(path.resolve(__dirname, "../upload")));
 const uploadHandler=require('./upload');
+const sep=path.sep;
+const redisClient=require('./conn-redis');
 app.post("/upload", (req, res) => {
   const form = new formidable.IncomingForm();
   form.maxFileSize=5*1024*1024;
@@ -32,6 +34,15 @@ app.post("/upload", (req, res) => {
   form.parse(req, function(err, fields, files) {
     const file=uploadHandler("fulAvatar",files);
     console.log(file);
+    const cfg = Object.assign({}, connMysqlCfg);
+    cfg.database = "debug_melor_top";
+    const fp=file.split(sep);
+    const filename=fp[fp.length-1];
+    const sql = `INSERT INTO filename (src,filename) VALUES (${JSON.stringify(file)},${JSON.stringify(filename)});`;
+    connMysql(cfg, sql, (error, results, fields) => {
+      console.log(error, results, fields);
+    });
+    // redisClient.set('file',filename);
     res.redirect("/upload");
   });
 });

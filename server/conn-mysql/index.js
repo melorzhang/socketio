@@ -1,18 +1,18 @@
 const mysql = require("mysql");
 const cfg=require("./mysql-db-cfg");
 // console.log(cfg);
-const connection = mysql.createConnection(cfg);
-connection.on('error',(err)=>{console.log(err)})
-connection.connect();
-connection.query("SHOW TABLES", function(error, results, fields) {
-  // if (error) throw error;
-  if (error) {
-    console.log(error);
-  }
-  console.log("The results & field is: ", results, fields);
-});
+// const connection = mysql.createConnection(cfg);
+// connection.on('error',(err)=>{console.log(err)})
+// connection.connect();
+// connection.query("SHOW TABLES", function(error, results, fields) {
+//   // if (error) throw error;
+//   if (error) {
+//     console.log(error);
+//   }
+//   console.log("The results & field is: ", results, fields);
+// });
 
-connection.end();
+// connection.end();
 module.exports=function (cfg,sql,callback) {
   const connection = mysql.createConnection(cfg);
   connection.on("error", err => {
@@ -23,9 +23,10 @@ module.exports=function (cfg,sql,callback) {
     // if (error) throw error;
     if (error) {
       console.log(error);
+      typeof callback === "function" && callback(error,results, fields);
     }
     console.log("The results & field is: ", results, fields);
-    typeof callback==='function'&&callback(results,fields);
+    typeof callback === "function" && callback(error, results, fields);
   });
   connection.end();
 }
