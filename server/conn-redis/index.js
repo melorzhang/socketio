@@ -7,8 +7,8 @@ const cfg = require('./config');
 // });
 
 client.on("connect", function() {
-  // client.set("author", "Wilson", redis.print);
-  // client.get("author", redis.print);
+  client.set("author", "Wilson", redis.print);
+  client.get("author", redis.print);
   console.log("connect");
 });
 client.on("ready", function(err) {
